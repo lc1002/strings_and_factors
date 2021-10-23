@@ -7,6 +7,7 @@ output: github_document
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(rvest)
+library(p8105.datasets)
 
 knitr::opts_chunk$set(
   fig.width = 6,
@@ -155,8 +156,36 @@ marj_df %>%
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
 ```
 
+## Restaurant Inspection
 
 ```{r}
+data("rest_inspec")
+```
 
+```{r}
+rest_inspec %>% 
+  janitor::tabyl(boro, grade)
+```
+
+
+```{r}
+rest_inspec = 
+  rest_inspec %>% 
+  filter(
+    str_detect(grade, "[ABC]"),
+    !(boro == "Missing")
+  ) %>% 
+  mutate(boro = str_to_title(boro))
+```
+
+
+```{r}
+rest_inspec %>% 
+  filter(str_detect(dba, "[Pp][Ii][Zz][Zz][Aa]")) %>%   
+  mutate(
+    boro = fct_infreq(boro),
+    boro = fct_recode(boro, "The City" = "Manhattan")) %>%
+  ggplot(aes(x = boro, fill = grade)) + 
+  geom_bar()
 ```
 
